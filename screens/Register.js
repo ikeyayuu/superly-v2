@@ -1,6 +1,7 @@
 import React, { useLayoutEffect, useState } from 'react'
-import { KeyboardAvoidingView, StatusBar, StyleSheet, View } from 'react-native'
+import { TouchableOpacity, KeyboardAvoidingView, StatusBar, StyleSheet, View } from 'react-native'
 import { Button, Input, Image, Text } from 'react-native-elements';
+import { Colours } from '../components/Colours';
 
 const Register = ({ navigation }) => {
     const [name, setName] = useState('');
@@ -14,11 +15,21 @@ const Register = ({ navigation }) => {
         })
     }, [navigation]);
 
-    const register = () => {};
+    const register = () => {
+        auth
+        .createUserWithEmailAndPassword(email, password)
+        .then(authUser => {
+            authUser.user.updateProfile({
+                displayName: name,
+                // photoURL: imageUrl || "https://cencup.com/wp-content/uploads/2019/07/avatar-placeholder.png",
+            })
+        })
+        .catch(error => alert(error.message));
+    };
 
     return (
         <KeyboardAvoidingView behavior='padding' style={styles.container} >
-            <StatusBar style='light'/>
+            <StatusBar style={{backgroundColor: Colours.aqua}}/>
 
             <Text h3 style={{marginBottom: 50}}>
                 Create an account!
@@ -45,21 +56,23 @@ const Register = ({ navigation }) => {
                     value={password}
                     onChangeText={(text) => setPassword(text)}
                 />
-                <Input
+                {/* <Input
                     placeholder='Profile Picture URL (optional)'
                     type='text'
                     value={imageUrl}
                     onChangeText={(text) => setImageUrl(text)}
                     onSubmitEditing={register}
-                />
+                /> */}
             </View>
             
-            <Button
-                containerStyle={styles.button}
-                onPress={register}
-                title='Register'
-                raised
-            />
+            <TouchableOpacity 
+                style={styles.touchable} 
+                onPress={register} 
+            >
+                <Text style={styles.touchableText}>
+                    Register
+                </Text>
+            </TouchableOpacity>
             <View style={{height: 100}}/>
         </KeyboardAvoidingView>
     )
@@ -73,7 +86,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         padding: 10,
-        backgroundColor: 'white',
     },
     inputContainer:{
         width: 300,
@@ -82,5 +94,22 @@ const styles = StyleSheet.create({
     button:{
         width: 200,
         marginTop: 10,
+    },
+    touchable:{
+        marginTop: 20,
+        width: 200,
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: 40,
+        backgroundColor: Colours.aqua,
+        borderRadius: 5,
+
+    },
+    touchableText:{
+        fontSize: 20,
+        fontWeight: '700',
+        textTransform: 'uppercase',
+        color: 'white',
+
     },
 })
